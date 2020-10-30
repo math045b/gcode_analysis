@@ -8,13 +8,13 @@ class GcodeUi {
   var doAnalyzeDelta = 0;
   var analyzerCallbacks;
 
-  fireCallback({dynamic name, dynamic payload}) {
+  void fireCallback({dynamic name, dynamic payload}) {
     if (analyzerCallbacks != null && analyzerCallbacks[name] is Function) {
       analyzerCallbacks[name](payload);
     }
   }
 
-  processMessage(var e) {
+  void processMessage(var e) {
     dynamic data = e.data;
 
     switch (data.cmd) {
@@ -31,8 +31,9 @@ class GcodeUi {
         // );
         break;
       case "analyzeDone":
-        //Validate data!
-        bool success = false, isCritical = false;
+      //Validate data!
+        bool success = false,
+            isCritical = false;
         String errMsg = "";
 
         if (data.msg != null) {
@@ -134,8 +135,106 @@ class GcodeUi {
         print("default msg received" + data.cmd);
     }
   }
+
+
 }
 
-class GcodeGcodeReader {}
+class GcodeGcodeReader {
+  var gcode, lines;
+  Map<String, String> zHeights;
+  var model = [];
+  var max = {'x': null, 'y': null, 'z': null};
+  var min = {'x': null, 'y': null, 'z': null};
+  var modelSize = {'x': null, 'y': null, 'z': null};
+  var filamentByLayer = {};
+  var filamentByExtruder = {};
+  var printTimeByLayer;
+  var totalFilament = 0;
+  var printTime = 0;
+  var totalWeight = 0;
+  var layerHeight = 0;
+  var layerCnt = 0;
+  var layerTotal = 0;
+  var speeds = {};
+  var slicer = 'unknown';
+  var speedsByLayer = {};
+  var volSpeeds = {};
+  var volSpeedsByLayer = {};
+  var extrusionSpeeds = {};
+  var extrusionSpeedsByLayer = {};
+  var gCodeOptions = {
+    'sortLayers': false,
+    'purgeEmptyLayers': true,
+    'analyzeModel': false,
+    'filamentType': "ABS",
+    'filamentDia': 1.75,
+    'nozzleDia': 0.4,
+    'filamentDensity': 1.24
+  };
+
+  void prepareGCode() {
+    if (!lines) return;
+    gcode = [];
+    RegExp linesRegExp = RegExp(r"^(G0|G1|G90|G91|G92|M82|M83|G28)",
+      caseSensitive: true,);
+    for (var i = 0; i < lines.length; i++) {
+      if (linesRegExp.hasMatch(lines[i])) {
+        gcode.push(lines[i]);
+      }
+    }
+    lines = [];
+    print("GCode prepared");
+  }
+
+  void sortLayers() {
+    var sortedZ = [];
+    var tmpModel = [];
+    //var cnt = 0;
+    //console.log(z_heights);
+    //TODO: Fix this.. vvv
+    //for (var layer in zHeights) {
+    //sortedZ[zHeights[layer]] = layer;
+    //cnt++;
+    //}
+    //        console.log("cnt is " + cnt);
+    dynamic sort(dynamic a, dynamic b) {
+      return a - b;
+    }
+    //print(sortedZ);
+    //print(model.length);
+    for (var i = 0; i < sortedZ.length; i++) {
+      //console.log("i is " + i +" and sortedZ[i] is " + sortedZ[i] + "and z_heights[] is " + z_heights[sortedZ[i]] );
+      if (zHeights[sortedZ[i]] == null) continue;
+      //TODO: Fix this.. vvv
+      //tmpModel[i] = model[zHeights[sortedZ[i]]];
+    }
+    //TODO: Fix this.. vvv
+    //model = tmpModel;
+    //console.log(model.length);
+    //TODO: Fix this.. vvv
+    //delete tmpModel;
+  }
+
+  void purgeLayers () {
+    var purge = true;
+    if (model == null) {
+      print("Something terribly wrong just happened.");
+      return;
+    }
+    for (var i = 0; i < model.length; i++) {
+      purge = true;
+      if (model[i] == null) purge = true;
+      else {
+        for (var j = 0; j < model[i].length; j++) {
+          if (model[i][j].extrude) purge = false;
+        }
+      }
+      if (purge) {
+        model.sublist(i, 1);
+        i--;
+      }
+    }
+  }
+}
 
 class GcodeAnalyzer {}
