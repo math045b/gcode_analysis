@@ -1,25 +1,25 @@
 //import 'package:flutter_test/flutter_test.dart';
 //import 'package:gcode_analysis/gcode_analysis.dart';
+import 'dart:io';
+
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('Testing RegExp', () {
-    test('RegExp Test 1', () {
-      String testStr = 'G90 blablabla';
+  TestWidgetsFlutterBinding.ensureInitialized();
+  test('test', () async{
+    print('test Stated');
+    String gcode;
+    bool tempBool;
+    //print('Variables Initialized');
 
-      RegExp linesRegExp = RegExp(r"^(G0|G1|G90|G91|G92|M82|M83|G28)",
-        caseSensitive: true,);
+    gcode = await rootBundle.loadString('assets/gcode/medium_test_file.gcode');
 
-      expect(linesRegExp.hasMatch(testStr), true);
-    });
-    test('RegExp Test 2', () {
-      String testStr = 'g90 blablabla';
+    print('Gcode:');
+    print(gcode);
 
-      RegExp linesRegExp = RegExp(r"^(G0|G1|G90|G91|G92|M82|M83|G28)",
-        caseSensitive: true,);
-
-      expect(linesRegExp.hasMatch(testStr), false);
-    });
+    tempBool = (gcode != null) ? true : false;
+    expect(tempBool, true);
   });
 }
