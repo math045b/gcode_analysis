@@ -1,0 +1,63 @@
+xgcode 1.0
+
+;right_extruder_material: PLA
+;layer_height: 0.18
+;perimeter_shells: 2
+;top_solid_layers: 4
+;bottom_solid_layers: 3
+;fill_density: 15%
+;fill_pattern: hexagon
+;base_print_speed: 60
+;travel_speed: 80
+;right_extruder_temperature: 210
+;left_extruder_temperature: 0
+;platform_temperature: 50
+;right_extruder_temperature_raft0: 215
+;left_extruder_temperature_raft0: 0
+;right_extruder_temperature_reset:
+;left_extruder_temperature_reset:
+;start gcode
+M118 X15.00 Y15.00 Z11.55 T0
+M140 S50 T0
+M104 S215 T0
+M104 S0 T1
+M107
+G90
+G28
+M132 X Y Z A B
+G1 Z50.000 F420
+G161 X Y F3300
+M7 T0
+M6 T0
+M651
+;layer_count: 60
+M108 T0
+G1 X15.00 Y-15.00 F4800
+;preExtrude:0.20
+;preExtruder0
+M106
+G1 Z.200 F420
+G1 X15.00 Y-15.00 F4800
+G1 X15.00 Y15.00 E4.3504 F1200
+G1 X-15.00 Y15.00 E8.7009
+G1 X-15.00 Y-15.00 E13.0513
+G1 X15.00 Y-15.00 E17.4017
+;raft
+;layer:0.40
+;support-start
+;raft
+G1 E12.4017 F1500
+G1 Z.400 F420
+G1 X4.05 Y4.06 E485.4273
+M107
+;percent
+G1 E480.4273 F1500
+;end gcode
+M104 S0 T0
+M140 S0 T0
+G162 Z F1800
+G28 X Y
+M132 X Y A B
+M652
+G91
+M18
